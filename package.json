@@ -1,0 +1,55 @@
+{
+  "name": "@taleland/tsconfig",
+  "version": "0.0.0",
+  "description": "Shared TypeScript configurations for Taleland services and libraries",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taleland/tsconfig.git"
+  },
+  "bugs": {
+    "url": "https://github.com/taleland/tsconfig/issues"
+  },
+  "homepage": "https://github.com/taleland/tsconfig#readme",
+  "scripts": {
+    "release": "semantic-release",
+    "release:dry-run": "semantic-release --dry-run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    "./base": "./tsconfig.base.json",
+    "./lib": "./tsconfig.lib.json",
+    "./service": "./tsconfig.service.json"
+  },
+  "files": [
+    "tsconfig.base.json",
+    "tsconfig.lib.json",
+    "tsconfig.service.json",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "tsconfig",
+    "typescript",
+    "node",
+    "nodenext",
+    "configuration",
+    "library",
+    "service",
+    "taleland"
+  ],
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.0",
+    "conventional-changelog-conventionalcommits": "^9.3.0",
+    "semantic-release": "^25.0.3"
+  }
+}
