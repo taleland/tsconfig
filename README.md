@@ -1,46 +1,22 @@
-# `@taleland/tsconfig`
+# @taleland/tsconfig
 
-Shared TypeScript configurations for Taleland Node.js projects.
+Shared TypeScript configurations for Taleland services and libraries.
 
-## Install
+## Installation
 
-```sh
-npm install --save-dev @taleland/tsconfig
+```bash
+npm install -D @taleland/tsconfig
 ```
 
 ## Presets
 
-This package publishes three presets:
-
-- `@taleland/tsconfig/base` for common Node.js projects
-- `@taleland/tsconfig/service` for backend services
-- `@taleland/tsconfig/lib` for reusable libraries and monorepo packages
+- `@taleland/tsconfig/base` - shared base configuration
+- `@taleland/tsconfig/lib` - base config with declaration output
+- `@taleland/tsconfig/service` - base config for services
 
 ## Usage
 
-### Base
-
-```json
-{
-  "extends": "@taleland/tsconfig/base",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "include": ["src/**/*.ts"]
-}
-```
-
-### Service
-
-```json
-{
-  "extends": "@taleland/tsconfig/service",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "include": ["src/**/*.ts"]
-}
-```
+Use the preset that matches your package type.
 
 ### Library
 
@@ -51,53 +27,36 @@ This package publishes three presets:
     "outDir": "dist",
     "rootDir": "src"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*"]
 }
 ```
 
-## What is included
+### Service
 
-Base config includes:
+```json
+{
+  "extends": "@taleland/tsconfig/service",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"]
+}
+```
 
-- `target` and `lib` set for modern Node.js runtimes
-- `module` and `moduleResolution` set to `NodeNext`
-- strict type checking
-- JSON module support
-- decorator support with metadata
+### Override options
 
-Additional preset behavior:
+You can still override any option locally:
 
-- `service` enables `sourceMap` and `incremental`
-- `lib` enables `composite`, `declaration`, `declarationMap`, `incremental`, and `sourceMap`
+```json
+{
+  "extends": "@taleland/tsconfig/base",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}
+```
 
 ## License
 
 Apache-2.0
-
-## Release
-
-Package publishing is handled by GitHub Actions in `.github/workflows/publish.yml` with `semantic-release`.
-
-The workflow runs when:
-
-- a pull request is merged into `main`
-- the workflow is started manually with `workflow_dispatch`
-
-Versioning is derived from Conventional Commits:
-
-- `fix:` publishes a patch release
-- `feat:` publishes a minor release
-- `BREAKING CHANGE:` or `!` publishes a major release
-
-During release, the workflow:
-
-- calculates the next version from commit history
-- updates `package.json` and `package-lock.json`
-- generates `CHANGELOG.md`
-- creates a GitHub release
-- publishes the package to npm with provenance
-
-To enable publishing, configure one of these options on npm:
-
-- preferred: npm trusted publishing for this GitHub repository
-- fallback: add an `NPM_TOKEN` repository secret with publish access
