@@ -57,6 +57,18 @@ You can still override any option locally:
 }
 ```
 
+## Releases
+
+Merges into `main` publish through `publish.yml` with semantic-release and npm
+Trusted Publishing. The npm trusted publisher must authorize GitHub organization
+`taleland`, repository `tsconfig`, workflow `publish.yml`, with direct publishing
+allowed and no environment restriction. No `NPM_TOKEN` is used. Manual workflow
+dispatches must target `main`; release jobs run sequentially and test the package
+before publishing.
+
+The Conventional Commits preset stays on major 9 while release-notes-generator 14
+uses changelog-writer 8. The release-note regression test checks this compatibility.
+
 ## License
 
 Apache-2.0
