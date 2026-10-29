@@ -1,6 +1,10 @@
 version: 2
 updates:
   - package-ecosystem: npm
+    # release-notes-generator 14 uses writer 8; preset 10 requires writer 9.
+    ignore:
+      - dependency-name: conventional-changelog-conventionalcommits
+        versions: [">=10"]
     directory: /
     schedule:
       interval: daily
