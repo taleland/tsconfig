@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import ts from 'typescript';
+const compiler = join(dirname(fileURLToPath(import.meta.resolve('typescript/package.json'))), 'bin/tsc');
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 
@@ -33,25 +33,20 @@ test('published configurations compile in an independent consumer', async t => {
         include: ['index.ts'],
       }));
       await writeFile(sourceFile, 'export const answer: number = 42;\n');
-      const config = ts.readConfigFile(configFile, ts.sys.readFile);
-      assert.equal(config.error, undefined);
-      const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, project);
-      assert.deepEqual(parsed.errors, []);
-      const program = ts.createProgram(parsed.fileNames, parsed.options);
-      const diagnostics = ts.getPreEmitDiagnostics(program);
-      assert.equal(diagnostics.length, 0, ts.formatDiagnostics(diagnostics, {
-        getCanonicalFileName: path => path,
-        getCurrentDirectory: () => project,
-        getNewLine: () => '\n',
-      }));
-      assert.equal(program.emit().emitSkipped, false);
+      // Exercise the public CLI: TypeScript 7 no longer exposes the legacy compiler API.
+      const compile = () => spawnSync(process.execPath, [compiler, '--project', configFile, '--pretty', 'false'], {
+        cwd: project, encoding: 'utf8',
+      });
+      const result = compile();
+      assert.equal(result.status, 0, result.stdout + result.stderr);
       assert.match(await readFile(join(project, 'dist/index.js'), 'utf8'), /export const answer = 42/);
       if (profile === 'lib') {
         assert.match(await readFile(join(project, 'dist/index.d.ts'), 'utf8'), /answer: number/);
       }
       await writeFile(sourceFile, 'export const answer: number = undefined;\n');
-      const invalid = ts.createProgram(parsed.fileNames, parsed.options);
-      assert.ok(ts.getPreEmitDiagnostics(invalid).some(diagnostic => diagnostic.code === 2322),
+      const invalid = compile();
+      assert.notEqual(invalid.status, 0);
+      assert.match(invalid.stdout + invalid.stderr, /TS2322/,
         'The inherited strict configuration must reject undefined assigned to number');
     });
   }
